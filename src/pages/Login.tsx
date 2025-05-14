@@ -2,111 +2,125 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from 'sonner';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    
-    setIsLoading(true);
-    
+    setLoading(true);
+
     try {
+      // Special case for admin login with a hardcoded username instead of email
+      if (email === "EcellMESWCOE" && password === "Ecell162024") {
+        // Call login with admin email from the mock data
+        await login("admin@ecell.com", "admin123");
+        navigate("/admin");
+        return;
+      }
+
+      // Regular login flow
       await login(email, password);
       navigate("/");
     } catch (error) {
-      // Error is handled in the auth context
-      console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
+      toast.error("Failed to login. Please check your credentials.");
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="flex justify-center items-center text-3xl font-bold">
-            <span className="text-primary">ECELL</span>
-            <span className="text-secondary ml-2">MESWCOE</span>
-          </h1>
-        </div>
-        
-        <Card className="animate-scale-in">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to sign in to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 to-black text-white">
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8 animate-fade-in">
+            <Link to="/" className="inline-block">
+              <div className="flex items-center justify-center mb-2">
+                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary mb-2 mx-auto">
+                  <img 
+                    src="/lovable-uploads/3a23508b-f321-4592-886c-c1a4c606d96b.png" 
+                    alt="E-Cell MESWCOE Logo" 
+                    className="w-full h-full object-contain bg-white"
                   />
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                      Forgot password?
-                    </Link>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
               </div>
+              <span className="font-heading text-2xl font-bold text-primary">ECELL</span>
+              <span className="font-heading text-2xl text-white ml-1">MESWCOE</span>
+            </Link>
+            <h1 className="text-3xl font-bold mt-6">Welcome Back</h1>
+            <p className="text-gray-400 mt-2">Sign in to your account to continue</p>
+          </div>
+
+          <div className="bg-gray-800/60 p-8 rounded-xl border border-gray-700 shadow-2xl animate-scale-in">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email or Username</Label>
+                <Input
+                  id="email"
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email or username"
+                  className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link to="#" className="text-sm text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                  required
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-white"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+                    Signing in...
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
             </form>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <div className="text-center text-sm text-gray-600 mt-2">
-              <span>Don't have an account? </span>
-              <Link to="/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-400">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up
+                </Link>
+              </p>
             </div>
-            <div className="mt-4 text-xs text-center text-gray-500">
-              <p>Demo Credentials:</p>
-              <p>Admin: admin@ecell.com / admin123</p>
-              <p>User: user@ecell.com / user123</p>
-            </div>
-          </CardFooter>
-        </Card>
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <p>By signing in, you agree to our Terms of Service and Privacy Policy.</p>
+          </div>
+        </div>
       </div>
     </div>
   );

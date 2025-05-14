@@ -36,22 +36,31 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <div className="h-screen bg-secondary text-white flex flex-col w-64 fixed left-0 top-0">
-      <div className="p-6 border-b border-gray-700">
+    <div className="h-screen bg-black text-white flex flex-col w-64 fixed left-0 top-0 border-r border-gray-800">
+      <div className="p-6 border-b border-gray-800">
         <Link to="/admin" className="flex items-center">
-          <span className="font-heading text-2xl font-bold text-primary">ECELL</span>
-          <span className="font-heading text-xl text-white ml-2">Admin</span>
+          <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-primary mr-3">
+            <img 
+              src="/lovable-uploads/3a23508b-f321-4592-886c-c1a4c606d96b.png" 
+              alt="E-Cell MESWCOE Logo" 
+              className="w-full h-full object-contain bg-white"
+            />
+          </div>
+          <div>
+            <span className="font-heading text-2xl font-bold text-primary">ECELL</span>
+            <span className="font-heading text-xl text-white ml-1">Admin</span>
+          </div>
         </Link>
       </div>
       
       <nav className="flex-1 overflow-y-auto py-6">
-        <ul className="space-y-1">
+        <ul className="space-y-1 px-2">
           {navItems.map((item) => (
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center px-6 py-3 text-white/80 hover:bg-gray-700 hover:text-white ${
-                  isActive(item.path) ? "bg-gray-700 text-white" : ""
+                className={`flex items-center px-4 py-3 rounded-lg text-white/80 hover:bg-gray-800 hover:text-white transition-all ${
+                  isActive(item.path) ? "bg-primary/20 text-white border-l-4 border-primary" : ""
                 }`}
               >
                 <item.icon size={20} className={isActive(item.path) ? "text-primary" : ""} />
@@ -62,7 +71,7 @@ const AdminSidebar = () => {
         </ul>
       </nav>
       
-      <div className="p-4 border-t border-gray-700">
+      <div className="p-4 border-t border-gray-800">
         <div className="flex justify-between items-center mb-4">
           <Link
             to="/"
@@ -74,7 +83,7 @@ const AdminSidebar = () => {
         </div>
         <Button
           variant="outline"
-          className="w-full justify-start text-white border-gray-600 hover:bg-gray-700"
+          className="w-full justify-start text-white border-gray-700 hover:bg-gray-800"
           onClick={logout}
         >
           <LogOut size={18} className="mr-2" />
