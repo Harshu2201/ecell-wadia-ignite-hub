@@ -8,14 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Team = () => {
   const { teamMembers } = useData();
   const [year, setYear] = useState("2024-25");
-  const [animatedMembers, setAnimatedMembers] = useState<number[]>([]);
+  const [animatedMembers, setAnimatedMembers] = useState<string[]>([]);
 
   const filteredMembers = teamMembers.filter(member => member.year === year);
 
   // Group members by role
-  const teamLeads = filteredMembers.filter(member => member.role === "Lead" || member.role === "President");
-  const coreCommittee = filteredMembers.filter(member => member.role === "Core Team" || member.role.includes("Head"));
-  const volunteers = filteredMembers.filter(member => member.role === "Member" || member.role === "Volunteer");
+  const teamLeads = filteredMembers.filter(member => member.role === "Lead" || member.role === "President" || member.role === "Vice President");
+  const coreCommittee = filteredMembers.filter(member => member.role === "Core Team" || member.role.includes("Head") || member.role.includes("Lead"));
+  const volunteers = filteredMembers.filter(member => member.role === "Member" || member.role === "Volunteer" || member.role === "Secretary");
 
   // Handle animation on scroll
   useEffect(() => {
@@ -23,8 +23,8 @@ const Team = () => {
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const id = Number(entry.target.getAttribute('data-id'));
-            if (!animatedMembers.includes(id)) {
+            const id = entry.target.getAttribute('data-id');
+            if (id && !animatedMembers.includes(id)) {
               setAnimatedMembers(prev => [...prev, id]);
             }
           }
@@ -42,7 +42,7 @@ const Team = () => {
     };
   }, [year, animatedMembers]);
 
-  const isAnimated = (id: number) => animatedMembers.includes(id);
+  const isAnimated = (id: string) => animatedMembers.includes(id);
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -98,7 +98,7 @@ const Team = () => {
                     className={`team-member-card relative bg-black/60 rounded-lg overflow-hidden shadow-xl border border-gray-800 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:border-primary/30 ${
                       isAnimated(member.id) ? 'animate-fade-in' : 'opacity-0'
                     }`}
-                    style={{ animationDelay: `${0.1 * (member.id % 10)}s` }}
+                    style={{ animationDelay: `${0.1 * (parseInt(member.id) % 10)}s` }}
                   >
                     <div className="h-[250px] overflow-hidden">
                       <img 
@@ -108,8 +108,8 @@ const Team = () => {
                       />
                     </div>
                     <div className="absolute top-2 right-2">
-                      {member.linkedinUrl && (
-                        <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition-transform">
+                      {member.linkedin && (
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition-transform">
                           <Linkedin size={18} />
                         </a>
                       )}
@@ -119,7 +119,6 @@ const Team = () => {
                       <div className="inline-block px-3 py-1 bg-primary/20 rounded-full text-primary text-sm mb-3">
                         {member.role}
                       </div>
-                      <p className="text-gray-300">{member.department}</p>
                     </div>
                   </div>
                 ))}
@@ -145,7 +144,7 @@ const Team = () => {
                     className={`team-member-card bg-black/60 rounded-lg overflow-hidden shadow-lg border border-gray-800 transform transition-all duration-500 hover:scale-105 hover:shadow-xl hover:border-primary/30 ${
                       isAnimated(member.id) ? 'animate-fade-in' : 'opacity-0'
                     }`}
-                    style={{ animationDelay: `${0.1 * (member.id % 10)}s` }}
+                    style={{ animationDelay: `${0.1 * (parseInt(member.id) % 10)}s` }}
                   >
                     <div className="h-[200px] overflow-hidden">
                       <img 
@@ -155,8 +154,8 @@ const Team = () => {
                       />
                     </div>
                     <div className="absolute top-2 right-2">
-                      {member.linkedinUrl && (
-                        <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition-transform">
+                      {member.linkedin && (
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition-transform">
                           <Linkedin size={18} />
                         </a>
                       )}
@@ -166,7 +165,6 @@ const Team = () => {
                       <div className="inline-block px-2 py-1 bg-primary/20 rounded-full text-primary text-xs mb-2">
                         {member.role}
                       </div>
-                      <p className="text-gray-300 text-sm">{member.department}</p>
                     </div>
                   </div>
                 ))}
@@ -192,7 +190,7 @@ const Team = () => {
                     className={`team-member-card bg-black/60 rounded-lg overflow-hidden shadow-md border border-gray-800 transform transition-all duration-500 hover:scale-105 hover:shadow-xl hover:border-primary/30 ${
                       isAnimated(member.id) ? 'animate-fade-in' : 'opacity-0'
                     }`}
-                    style={{ animationDelay: `${0.1 * (member.id % 10)}s` }}
+                    style={{ animationDelay: `${0.1 * (parseInt(member.id) % 10)}s` }}
                   >
                     <div className="h-36 overflow-hidden">
                       <img 
@@ -202,15 +200,15 @@ const Team = () => {
                       />
                     </div>
                     <div className="absolute top-2 right-2">
-                      {member.linkedinUrl && (
-                        <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-1.5 rounded-full text-white hover:scale-110 transition-transform">
+                      {member.linkedin && (
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="bg-blue-600 p-1.5 rounded-full text-white hover:scale-110 transition-transform">
                           <Linkedin size={14} />
                         </a>
                       )}
                     </div>
                     <div className="p-3 bg-gradient-to-b from-black/80 to-black">
                       <h3 className="text-base font-bold text-white mb-1">{member.name}</h3>
-                      <p className="text-gray-300 text-xs">{member.department}</p>
+                      <p className="text-gray-300 text-xs">{member.role}</p>
                     </div>
                   </div>
                 ))}
