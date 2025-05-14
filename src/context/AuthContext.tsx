@@ -16,6 +16,7 @@ type AuthContextType = {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAdmin: boolean;
+  resetPassword: (email: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -111,10 +112,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Logged out successfully');
   };
 
+  // Add reset password function
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Check if user exists
+      const userExists = MOCK_USERS.some(u => u.email === email);
+      
+      if (!userExists) {
+        // For security reasons, don't reveal if email exists
+        // Just pretend we sent the email anyway
+        console.log("User not found, but not revealing this to client");
+      }
+      
+      // In a real app, you would send a password reset email
+      console.log(`Password reset requested for ${email}`);
+      
+      // Return success regardless (security best practice)
+      return;
+    } catch (error) {
+      console.error("Password reset error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, isAdmin, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
